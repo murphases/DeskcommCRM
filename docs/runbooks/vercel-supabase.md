@@ -28,6 +28,9 @@ chama as rotas existentes da Vercel por `pg_net`. Assim mantemos as cadências e
 a autenticação Bearer sem concentrar dezenas de workers do `pg_cron` no mesmo
 minuto.
 
+`vercel.json` reserva até 240 segundos para essas rotas, que é o maior timeout
+declarado pelo scheduler Docker original.
+
 1. Gere o SQL a partir da agenda canônica:
 
    ```bash

@@ -15,7 +15,7 @@ modo.
   o debounce de IA; Supabase Postgres não substitui esse adaptador hoje.
 - Segredos da aplicação configurados na Vercel: as chaves Supabase, `INTERNAL_SECRET`,
   `INTERNAL_CRON_SECRET`, `CPF_ENCRYPTION_KEY`, `AI_CRED_AES_KEY`,
-  `SUPABASE_DB_URL`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`,
+  `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`,
   `NEXT_PUBLIC_APP_URL` e `NEXT_PUBLIC_ADMIN_URL`.
 - `WAHA_*`, `WACALLS_*`, `ARI_*` e `COMPOSE_PROFILES` ficam vazios. Vazio é o
   sinal explícito de que esses adaptadores não existem nesta instalação.
@@ -31,7 +31,8 @@ psql "$SUPABASE_DB_ADMIN_URL" -v ON_ERROR_STOP=1 -f supabase/baseline.sql
 
 Não use `supabase db push` para esse primeiro bootstrap: o projeto usa
 `supabase/baseline.sql` como schema completo de instalação. Depois, guarde a
-string de pooler usada pelo app em `SUPABASE_DB_URL`; a credencial
+`DEPLOYMENT_PROFILE=vercel-supabase` dispensa `SUPABASE_DB_URL`: o worker de
+Postgres direto fica desligado nesse perfil. A credencial
 administrativa não entra na Vercel.
 
 ## Agendamento

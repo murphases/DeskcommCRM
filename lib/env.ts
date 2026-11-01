@@ -24,6 +24,10 @@ const isProd = process.env.NODE_ENV === "production";
  * estáveis, senão `z.infer` degrada `env.*` pra `{}` (uniões quebram `.url()`).
  */
 const isBuildPhase = process.env.NEXT_PHASE === "phase-production-build";
+// Perfil explícito do adaptador Vercel + Supabase. Sem processo persistente,
+// as rotas que usam `pg` direto (worker/skills avançadas) ficam desligadas;
+// exigir a URL do pooler impediria o CRM e o Supabase Auth de iniciarem.
+const isVercelSupabaseProfile = process.env.DEPLOYMENT_PROFILE === "vercel-supabase";
 
 /**
  * Em produção exigimos todas as vars críticas. Em dev, algumas são opcionais
@@ -184,7 +188,9 @@ const schema = z.object({
 
   // Postgres direto do Supabase (Settings → Database) — só as rotas de skills
   // instaláveis (import/install) usam `pg` cru (mesmo pool do agent-engine).
-  SUPABASE_DB_URL: required("SUPABASE_DB_URL"),
+  SUPABASE_DB_URL: isVercelSupabaseProfile
+    ? z.string().url().optional().default("")
+    : required("SUPABASE_DB_URL"),
   /**
    * A conexão de DDL do KIT (install.sh/update.sh/backup.sh), não do app.
    * O `docker-compose.prod.yml` entrega o `.env` inteiro ao app, ao worker e

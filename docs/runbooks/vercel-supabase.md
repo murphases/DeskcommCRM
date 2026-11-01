@@ -20,6 +20,20 @@ modo.
 - `WAHA_*`, `WACALLS_*`, `ARI_*` e `COMPOSE_PROFILES` ficam vazios. Vazio é o
   sinal explícito de que esses adaptadores não existem nesta instalação.
 
+## Schema inicial
+
+Em um projeto Supabase vazio, aplique o baseline idempotente com a connection
+string **direta de administrador** obtida no painel do Supabase:
+
+```bash
+psql "$SUPABASE_DB_ADMIN_URL" -v ON_ERROR_STOP=1 -f supabase/baseline.sql
+```
+
+Não use `supabase db push` para esse primeiro bootstrap: o projeto usa
+`supabase/baseline.sql` como schema completo de instalação. Depois, guarde a
+string de pooler usada pelo app em `SUPABASE_DB_URL`; a credencial
+administrativa não entra na Vercel.
+
 ## Agendamento
 
 Não use Vercel Cron para esta agenda: o plano Hobby limita os jobs. Em vez disso,

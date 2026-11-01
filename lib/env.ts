@@ -171,7 +171,10 @@ const schema = z.object({
   CPF_ENCRYPTION_KEY: required("CPF_ENCRYPTION_KEY"),
   // Opcional (template genérico) — só necessária ao ligar NUVEMSHOP_ENABLED.
   NUVEMSHOP_OAUTH_ENCRYPTION_KEY: z.string().optional().default(""),
-  WAHA_BYO_ENCRYPTION_KEY: required("WAHA_BYO_ENCRYPTION_KEY"),
+  // WAHA é um adaptador opcional de canal. No deploy serverless ele fica
+  // deliberadamente desligado: exigir uma chave de uma infraestrutura que não
+  // existe impediria até o CRM sem WhatsApp de iniciar na Vercel.
+  WAHA_BYO_ENCRYPTION_KEY: z.string().optional().default(""),
   /**
    * AES-256-GCM key (32 bytes em base64) usada pra cifrar API keys em
    * `ai_provider_credentials`. Em produção é obrigatória; em dev a default vazia
@@ -197,10 +200,13 @@ const schema = z.object({
    */
   SUPABASE_DB_ADMIN_URL: z.string().optional().default(""),
 
-  // WAHA
-  WAHA_API_BASE_URL: required("WAHA_API_BASE_URL"),
-  WAHA_API_KEY: required("WAHA_API_KEY"),
-  WAHA_WEBHOOK_BASE_URL: required("WAHA_WEBHOOK_BASE_URL"),
+  // WAHA. O adapter continua disponível para instalações self-hosted, mas é
+  // opcional: funções serverless não conseguem hospedar a sessão persistente
+  // do NOWEB. Os pontos de uso já interpretam URL/chave vazias como transporte
+  // indisponível, sem expor ou simular uma conexão.
+  WAHA_API_BASE_URL: z.string().optional().default(""),
+  WAHA_API_KEY: z.string().optional().default(""),
+  WAHA_WEBHOOK_BASE_URL: z.string().optional().default(""),
   // Segredo com que o WAHA assina os webhooks. O compose já o entrega ao
   // contêiner do WAHA; o app precisa dele para CONFERIR a assinatura — e não o
   // declarava aqui, então nunca teve como verificar nada.

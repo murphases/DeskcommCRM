@@ -132,6 +132,7 @@ pnpm test:unit        # vitest — EXCLUI tests/invariants, tests/e2e e tests/jo
 pnpm test:db          # invariantes de banco + gate do baseline (PRECISA de Docker)
 pnpm test:e2e         # Playwright (PRECISA de app rodando + banco semeado)
 pnpm gov:verify       # typecheck + lint + lint:channels + lint:role-rank + test:unit
+pnpm verify:full      # gov:verify + shell + banco + E2E (exige Docker e ambiente E2E)
                       # ← verificação única atual; o encadeamento real sai de:
                       #   node -e "console.log(require('./package.json').scripts['gov:verify'])"
 pnpm lint             # eslint (flat config)
@@ -153,6 +154,8 @@ pnpm playwright test tests/e2e/x.spec.ts    # uma spec e2e
 ```
 
 ⚠️ **`pnpm gov:verify` não cobre tudo.** Ele omite `test:db`, `test:e2e` **e** `test:shell`.
+Use `pnpm verify:full` quando o ambiente local tiver Docker e as variáveis de E2E: ele encadeia
+os quatro gates. O comando rápido continua adequado para o loop de implementação.
 Se a mudança toca schema/RLS/tabela tenant-aware, rode `pnpm test:db`. Se toca UI ou fluxo de
 usuário, rode `pnpm test:e2e` com evidência visual. Se toca `Dockerfile*`, `docker-compose*` ou
 `hostgator-setup-kit/`, rode `pnpm test:shell` — é o único gate que exercita o kit.

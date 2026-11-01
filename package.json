@@ -37,6 +37,7 @@
     "release:cortar": "tsx scripts/cortar-release.ts --escrever",
     "release:acervo-cabe": "tsx scripts/acervo-cabe-na-tela.ts",
     "gov:verify": "pnpm typecheck && pnpm lint && pnpm lint:channels && pnpm lint:role-rank && pnpm test:unit",
+    "verify:full": "pnpm gov:verify && pnpm test:shell && pnpm test:db && pnpm test:e2e",
     "worker": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local workers/agent-worker/main.ts",
     "local:up": "bash scripts/local-stack.sh up",
     "local:down": "bash scripts/local-stack.sh down",

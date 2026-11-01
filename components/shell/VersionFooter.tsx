@@ -25,10 +25,13 @@ export function VersionFooter({
   if (!data) return null;
 
   const label = data.current_version.replace(/^v/i, "");
+  const serverless = data.deployment_profile === "vercel-supabase";
   const personalizada = data.identity?.customized === true;
   const titulo = label
     ? `${t("Versão")} ${label}${personalizada ? ` · ${t("Personalizada")}` : ""}`
-    : t("Versão ainda não confirmada");
+    : serverless
+      ? "Implantação serverless"
+      : t("Versão ainda não confirmada");
   // Só acende quando existe versão nova de verdade. `off_release` sozinho não
   // conta: uma instalação de desenvolvimento sem versão publicada mais nova
   // ficava com o ponto pulsando pra sempre, e o texto "Nova versão · " com o
@@ -41,7 +44,7 @@ export function VersionFooter({
       title={titulo}
     >
       {collapsed && label ? label.split(".").slice(0, 2).join(".") : titulo}
-      {data.identity && data.identity.status !== "confirmed" && (
+      {!serverless && data.identity && data.identity.status !== "confirmed" && (
         <span className="block text-[10px]">{t("Execução não confirmada")}</span>
       )}
     </p>

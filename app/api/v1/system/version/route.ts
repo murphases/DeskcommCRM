@@ -31,6 +31,8 @@ import {
 } from "@/lib/system/update-run";
 
 export const dynamic = "force-dynamic";
+const deploymentProfile =
+  process.env.DEPLOYMENT_PROFILE === "vercel-supabase" ? "vercel-supabase" : "self-hosted";
 
 /** Sem notícia do agente por 24h, a tela ensina o caminho manual. */
 const AGENT_OFFLINE_AFTER_MS = 24 * 60 * 60 * 1000;
@@ -135,7 +137,7 @@ export async function GET(_req: NextRequest): Promise<Response> {
       : current;
 
   if (!user.is_platform_admin) {
-    return ok({ current_version: running, is_owner: false, identity });
+    return ok({ current_version: running, deployment_profile: deploymentProfile, is_owner: false, identity });
   }
 
   const latest = version?.latest_version ?? "";
@@ -166,6 +168,7 @@ export async function GET(_req: NextRequest): Promise<Response> {
 
   return ok({
     current_version: running,
+    deployment_profile: deploymentProfile,
     identity,
     runtime_services: observation.success ? observation.data.services : null,
     official_latest_version: observation.success

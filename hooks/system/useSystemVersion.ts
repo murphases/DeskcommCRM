@@ -7,6 +7,8 @@ import type { RodadaDoBanco } from "@/lib/system/update-run";
 
 export interface SystemVersion {
   current_version: string;
+  /** Perfil de execução; o monitor de containers não se aplica à Vercel. */
+  deployment_profile?: "vercel-supabase" | "self-hosted";
   identity?: RuntimeIdentity;
   runtime_services?: RuntimeConfirmation["services"] | null;
   manual_reconciliation_required?: boolean;

@@ -52,8 +52,10 @@ declarado pelo scheduler Docker original.
    pnpm tsx scripts/gerar-crons-supabase.ts > supabase/serverless-cron.sql
    ```
 
-2. No SQL Editor do Supabase, crie os dois segredos do Vault, usando o domínio
-   de produção da Vercel e o mesmo valor definido em `INTERNAL_CRON_SECRET`.
+2. No SQL Editor do Supabase, crie `deskcomm_serverless_app_url` (domínio de
+   produção), `deskcomm_serverless_cron_secret` (o mesmo valor de
+   `INTERNAL_CRON_SECRET`) e, se Vercel Authentication estiver ativa,
+   `deskcomm_serverless_vercel_bypass` (o bypass de automação do projeto).
 3. Execute o SQL gerado. Ele substitui o dispatcher pelo mesmo nome, portanto é
    seguro regenerá-lo após uma mudança de agenda.
 

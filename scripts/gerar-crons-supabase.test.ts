@@ -12,6 +12,8 @@ describe("gerador de crons Supabase", () => {
     expect(sql).toContain("api/v1/cron/storage-redaction?limit=50");
     expect(sql).toContain("vault.decrypted_secrets");
     expect(sql).toContain("net.http_post");
+    expect(sql).toContain("deskcomm_serverless_vercel_bypass");
+    expect(sql).toContain("x-vercel-protection-bypass");
     expect(sql).toContain("deskcomm:serverless-dispatcher");
     expect(sql.match(/select cron\.schedule/g)).toHaveLength(1);
     expect(sql).toContain("revoke all on function private.disparar_crons_serverless");

@@ -20,6 +20,10 @@ CREATE SCHEMA IF NOT EXISTS "public";
 -- não existe; habilite-a antes de declarar qualquer coluna desse tipo.
 CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA "public";
 
+-- Índices de busca textual do dump usam public.gin_trgm_ops antes do bloco
+-- tardio de extensões do pg_dump.
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA "public";
+
 
 ALTER SCHEMA "public" OWNER TO "pg_database_owner";
 
@@ -46434,6 +46438,11 @@ drop function if exists public.fn_authorize_ai_form_capture(uuid, uuid, uuid, uu
 
 -- p_ttl_ms: validade da autorização, a MESMA régua do gate (AI_ALLOWLIST_TTL_DAYS,
 -- lida no servidor por ttlDaAutorizacaoMs). Nulo ou <= 0 não renova nada.
+-- O apêndice da migration 0563 aparece depois desta função no dump. Garanta a
+-- coluna aqui para que uma instalação vazia consiga compilar a função.
+alter table public.contacts
+  add column if not exists is_personal boolean default false not null;
+
 create or replace function public.fn_authorize_ai_form_capture(
   p_organization_id uuid, p_source_id uuid, p_lead_id uuid,
   p_contact_id uuid, p_request_id uuid, p_ttl_ms bigint
@@ -47956,6 +47965,28 @@ alter table public.organizations
 -- ── B. a chave e o limite ────────────────────────────────────────────────────
 -- A régua SQL de "a cobrança está ligada": só `ligado` liga, como em
 -- lib/instalacao/modulos.ts (linha ausente ou outro valor = desligada).
+-- A definição completa de platform_config pertence ao apêndice de 0341,
+-- posterior neste dump. Esta forma idêntica precisa existir antes das funções
+-- de cobrança que a consultam; o bloco posterior permanece idempotente.
+create table if not exists public.platform_config (
+  chave text primary key,
+  valor text,
+  ciphertext bytea,
+  iv bytea,
+  tag bytea,
+  last4 text,
+  eh_segredo boolean not null default false,
+  semeado_do_env boolean not null default false,
+  updated_at timestamptz not null default now(),
+  updated_by uuid,
+  constraint platform_config_chave_formato
+    check (chave ~ '^[A-Z][A-Z0-9_]{2,63}$'),
+  constraint platform_config_forma_do_valor check (
+    (eh_segredo and ciphertext is not null and iv is not null and tag is not null and valor is null)
+    or (not eh_segredo and valor is not null and ciphertext is null and iv is null and tag is null)
+  )
+);
+
 create or replace function public.fn_cobranca_ligada()
 returns boolean
 language sql

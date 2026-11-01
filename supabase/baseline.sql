@@ -15,6 +15,11 @@ SET row_security = off;
 
 CREATE SCHEMA IF NOT EXISTS "public";
 
+-- O dump usa public.citext em organizations antes do bloco de extensões
+-- produzido pelo pg_dump. Em uma instância Supabase recém-criada, ela ainda
+-- não existe; habilite-a antes de declarar qualquer coluna desse tipo.
+CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA "public";
+
 
 ALTER SCHEMA "public" OWNER TO "pg_database_owner";
 

@@ -15,6 +15,10 @@
 2. Leia [`ARCHITECTURE.md`](ARCHITECTURE.md) — visão de 1 página.
 3. Identifique o epic de origem em [`docs/stories/epics/MASTER.md`](docs/stories/epics/MASTER.md).
 
+Quer a versão curta para a primeira contribuição? Comece por
+[`docs/primeiro-pr-em-10-minutos.md`](docs/primeiro-pr-em-10-minutos.md) e volte
+a estas referências antes de abrir o PR.
+
 ## Fluxo
 
 ### Branches
